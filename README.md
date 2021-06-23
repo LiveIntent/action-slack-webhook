@@ -12,7 +12,7 @@ messages.
 
 ## Environment
 
-### SLACK_WEBHOOK_URL
+### `SLACK_WEBHOOK_URL`
 
 **required** The Slack webhook URL that the `payload` will be sent to.
 
