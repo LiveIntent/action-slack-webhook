@@ -13,18 +13,20 @@ messages.
 ## Example usage
 
 ```
-uses: liveintent/slack-webhook-action@v1.0.0
+uses: liveintent/action-slack-webhook@v1.0.0
 with:
     payload |
         {
             "text": "Hello world"
         }
+env:
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
 ## Development
 
-In order to develop this project, simply make changes to the action.js file and
-run `npm run build` to create the new distribution in the dist/ folder.
+In order to develop this project, simply make changes to the `action.js` file and
+run `npm run build` to create the new distribution in the `dist/` folder.
 
 ## License
 
