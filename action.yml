@@ -1,0 +1,12 @@
+name: 'Slack Webhook Action'
+description: |
+    This action will perform a POST request to a given Slack webhook. This can
+    be used to push both simple messages as well as more complex Block Kit based
+    rich messages.
+inputs:
+    payload:
+        required: true
+        description: 'A string of JSON that is sent as a POST request to Slack'
+run:
+    using: 'node12'
+    main: 'dist/action.js'
