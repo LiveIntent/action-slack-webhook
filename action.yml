@@ -9,4 +9,4 @@ inputs:
         description: 'A string of JSON that is sent as a POST request to Slack'
 runs:
     using: 'node12'
-    main: 'dist/action.js'
+    main: 'dist/index.js'
