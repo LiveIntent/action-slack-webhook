@@ -3254,7 +3254,7 @@ const axios = __nccwpck_require__(545)
 
 // Look for a string that matches base URL of a Slack webhook but is ending.
 // This will eliminate most cases of fundamentally invalid webhook URLs.
-const validWebhookUrlPattern = /^https:\/\/hooks\.slack\.com\/services\/(?!$)/
+const validWebhookUrlPattern = /^https:\/\/hooks\.slack\.com\/(?!$)/
 
 try {
     const webhookUrl = process.env.SLACK_WEBHOOK_URL
@@ -3270,7 +3270,7 @@ try {
     try {
         data = JSON.parse(payload)
     } catch (_) {
-        throw new Error('The playoad input must be valid JSON')
+        throw new Error('The playoad input must be valid JSON');
     }
 
     axios.post(webhookUrl, data)

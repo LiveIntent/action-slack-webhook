@@ -27,13 +27,13 @@ const axios = require('axios')
 
 // Look for a string that matches base URL of a Slack webhook but is ending.
 // This will eliminate most cases of fundamentally invalid webhook URLs.
-const invalidWebhookUrlPattern = /^https:\/\/hooks\.slack\.com\/(?!$)/
+const validWebhookUrlPattern = /^https:\/\/hooks\.slack\.com\/(?!$)/
 
 try {
     const webhookUrl = process.env.SLACK_WEBHOOK_URL
     if (!webhookUrl) throw new Error('The `SLACK_WEBHOOK_URL` environment variable is required')
 
-    if (invalidWebhookUrlPattern.test(webhookUrl)) throw new Error('Webhook must be a Slack webhook URL')
+    if (!validWebhookUrlPattern.test(webhookUrl)) throw new Error('Webhook must be a Slack webhook URL')
 
     const payload = core.getInput('payload')
     if (payload.length < 1) throw new Error('The payload input must be supplied')
