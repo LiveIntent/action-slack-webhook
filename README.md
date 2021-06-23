@@ -10,6 +10,12 @@ messages.
 
 **required** The JSON payload to be sent to the webhook. Must be a string.
 
+## Environment
+
+### SLACK_WEBHOOK_URL
+
+**required** The Slack webhook URL that the `payload` will be sent to.
+
 ## Example usage
 
 ```
