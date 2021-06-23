@@ -7,6 +7,6 @@ inputs:
     payload:
         required: true
         description: 'A string of JSON that is sent as a POST request to Slack'
-run:
+runs:
     using: 'node12'
     main: 'dist/action.js'
