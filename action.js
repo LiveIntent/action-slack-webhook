@@ -23,32 +23,37 @@
  */
 
 const core = require('@actions/core')
-const axios = require('axios')
+const { IncomingWebhook } = require('@slack/webhook')
 
-// Look for a string that matches base URL of a Slack webhook but is ending.
+// Look for a string that matches base URL of a Slack webhook but not ending.
 // This will eliminate most cases of fundamentally invalid webhook URLs.
 const validWebhookUrlPattern = /^https:\/\/hooks\.slack\.com\/(?!$)/
 
 try {
+    // 1. Grab the webhook and validate
     const webhookUrl = process.env.SLACK_WEBHOOK_URL
     if (!webhookUrl) throw new Error('The `SLACK_WEBHOOK_URL` environment variable is required')
-
     if (!validWebhookUrlPattern.test(webhookUrl)) throw new Error('Webhook must be a Slack webhook URL')
 
+    // 2. Pick up the payload and validate
     const payload = core.getInput('payload')
     if (payload.length < 1) throw new Error('The payload input must be supplied')
 
+    // 3. Parse the payload into an object
     let data
 
     try {
         data = JSON.parse(payload)
     } catch (_) {
-        throw new Error('The playoad input must be valid JSON');
+        throw new Error('The payload input must be valid JSON')
     }
 
-    axios.post(webhookUrl, data)
+    // 4. Send our data to the webhook
+    const webhook = new IncomingWebhook(webhookUrl)
+    webhook
+        .post(webhookUrl, data)
         .then(() => {})
-        .catch(err => {
+        .catch((err) => {
             throw new Error(`Webhook request failed\n${data}\n${err}`)
         })
 } catch (err) {
