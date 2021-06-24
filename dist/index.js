@@ -1,7 +1,15 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 351:
+/***/ 7716:
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"name":"@slack/webhook","version":"6.0.0","description":"Official library for using the Slack Platform\'s Incoming Webhooks","author":"Slack Technologies, Inc.","license":"MIT","keywords":["slack","request","client","http","api","proxy"],"main":"dist/index.js","types":"./dist/index.d.ts","files":["dist/**/*"],"engines":{"node":">= 12.13.0","npm":">= 6.12.0"},"repository":"slackapi/node-slack-sdk","homepage":"https://slack.dev/node-slack-sdk/webhook","publishConfig":{"access":"public"},"bugs":{"url":"https://github.com/slackapi/node-slack-sdk/issues"},"scripts":{"prepare":"npm run build","build":"npm run build:clean && tsc","build:clean":"shx rm -rf ./dist ./coverage ./.nyc_output","lint":"tslint --project .","test":"npm run build && nyc mocha --config .mocharc.json src/*.spec.js","coverage":"codecov -F webhook --root=$PWD","ref-docs:model":"api-extractor run"},"dependencies":{"@slack/types":"^1.2.1","@types/node":">=12.0.0","axios":"^0.21.1"},"devDependencies":{"@microsoft/api-extractor":"^7.3.4","@types/chai":"^4.1.7","@types/mocha":"^5.2.6","chai":"^4.2.0","codecov":"^3.2.0","mocha":"^6.0.2","nock":"^10.0.6","nyc":"^14.1.1","shx":"^0.3.2","sinon":"^7.2.7","source-map-support":"^0.5.10","ts-node":"^8.0.3","tslint":"^5.13.1","tslint-config-airbnb":"^5.11.1","typescript":"^4.1.0"}}');
+
+/***/ }),
+
+/***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -27,8 +35,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.issue = exports.issueCommand = void 0;
-const os = __importStar(__nccwpck_require__(87));
-const utils_1 = __nccwpck_require__(278);
+const os = __importStar(__nccwpck_require__(2087));
+const utils_1 = __nccwpck_require__(5278);
 /**
  * Commands
  *
@@ -100,7 +108,7 @@ function escapeProperty(s) {
 
 /***/ }),
 
-/***/ 186:
+/***/ 2186:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -135,11 +143,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
-const command_1 = __nccwpck_require__(351);
+const command_1 = __nccwpck_require__(7351);
 const file_command_1 = __nccwpck_require__(717);
-const utils_1 = __nccwpck_require__(278);
-const os = __importStar(__nccwpck_require__(87));
-const path = __importStar(__nccwpck_require__(622));
+const utils_1 = __nccwpck_require__(5278);
+const os = __importStar(__nccwpck_require__(2087));
+const path = __importStar(__nccwpck_require__(5622));
 /**
  * The code to exit an action
  */
@@ -430,9 +438,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.issueCommand = void 0;
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const fs = __importStar(__nccwpck_require__(747));
-const os = __importStar(__nccwpck_require__(87));
-const utils_1 = __nccwpck_require__(278);
+const fs = __importStar(__nccwpck_require__(5747));
+const os = __importStar(__nccwpck_require__(2087));
+const utils_1 = __nccwpck_require__(5278);
 function issueCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
     if (!filePath) {
@@ -450,7 +458,7 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 
-/***/ 278:
+/***/ 5278:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -477,32 +485,235 @@ exports.toCommandValue = toCommandValue;
 
 /***/ }),
 
-/***/ 545:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ 3178:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-module.exports = __nccwpck_require__(618);
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.IncomingWebhook = void 0;
+const axios_1 = __importDefault(__nccwpck_require__(6545));
+const errors_1 = __nccwpck_require__(8564);
+const instrument_1 = __nccwpck_require__(8645);
+/**
+ * A client for Slack's Incoming Webhooks
+ */
+class IncomingWebhook {
+    constructor(url, defaults = {}) {
+        if (url === undefined) {
+            throw new Error('Incoming webhook URL is required');
+        }
+        this.url = url;
+        this.defaults = defaults;
+        this.axios = axios_1.default.create({
+            baseURL: url,
+            httpAgent: defaults.agent,
+            httpsAgent: defaults.agent,
+            maxRedirects: 0,
+            proxy: false,
+            headers: {
+                'User-Agent': instrument_1.getUserAgent(),
+            },
+        });
+        delete this.defaults.agent;
+    }
+    /**
+     * Send a notification to a conversation
+     * @param message - the message (a simple string, or an object describing the message)
+     */
+    async send(message) {
+        // NOTE: no support for TLS config
+        let payload = Object.assign({}, this.defaults);
+        if (typeof message === 'string') {
+            payload.text = message;
+        }
+        else {
+            payload = Object.assign(payload, message);
+        }
+        try {
+            const response = await this.axios.post(this.url, payload);
+            return this.buildResult(response);
+        }
+        catch (error) {
+            // Wrap errors in this packages own error types (abstract the implementation details' types)
+            if (error.response !== undefined) {
+                throw errors_1.httpErrorWithOriginal(error);
+            }
+            else if (error.request !== undefined) {
+                throw errors_1.requestErrorWithOriginal(error);
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    /**
+     * Processes an HTTP response into an IncomingWebhookResult.
+     */
+    buildResult(response) {
+        return {
+            text: response.data,
+        };
+    }
+}
+exports.IncomingWebhook = IncomingWebhook;
+//# sourceMappingURL=IncomingWebhook.js.map
 
 /***/ }),
 
-/***/ 104:
+/***/ 8564:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.httpErrorWithOriginal = exports.requestErrorWithOriginal = exports.ErrorCode = void 0;
+/**
+ * A dictionary of codes for errors produced by this package
+ */
+var ErrorCode;
+(function (ErrorCode) {
+    ErrorCode["RequestError"] = "slack_webhook_request_error";
+    ErrorCode["HTTPError"] = "slack_webhook_http_error";
+})(ErrorCode = exports.ErrorCode || (exports.ErrorCode = {}));
+/**
+ * Factory for producing a {@link CodedError} from a generic error
+ */
+function errorWithCode(error, code) {
+    // NOTE: might be able to return something more specific than a CodedError with conditional typing
+    const codedError = error;
+    codedError.code = code;
+    return codedError;
+}
+/**
+ * A factory to create IncomingWebhookRequestError objects
+ * @param original The original error
+ */
+function requestErrorWithOriginal(original) {
+    const error = errorWithCode(new Error(`A request error occurred: ${original.message}`), ErrorCode.RequestError);
+    error.original = original;
+    return error;
+}
+exports.requestErrorWithOriginal = requestErrorWithOriginal;
+/**
+ * A factory to create IncomingWebhookHTTPError objects
+ * @param original The original error
+ */
+function httpErrorWithOriginal(original) {
+    const error = errorWithCode(new Error(`An HTTP protocol error occurred: statusCode = ${original.response.status}`), ErrorCode.HTTPError);
+    error.original = original;
+    return error;
+}
+exports.httpErrorWithOriginal = httpErrorWithOriginal;
+//# sourceMappingURL=errors.js.map
+
+/***/ }),
+
+/***/ 1095:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+/// <reference lib="es2017" />
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ErrorCode = exports.IncomingWebhook = void 0;
+var IncomingWebhook_1 = __nccwpck_require__(3178);
+Object.defineProperty(exports, "IncomingWebhook", ({ enumerable: true, get: function () { return IncomingWebhook_1.IncomingWebhook; } }));
+var errors_1 = __nccwpck_require__(8564);
+Object.defineProperty(exports, "ErrorCode", ({ enumerable: true, get: function () { return errors_1.ErrorCode; } }));
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 8645:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getUserAgent = exports.addAppMetadata = void 0;
+const os = __importStar(__nccwpck_require__(2087));
+const packageJson = __nccwpck_require__(7716); // tslint:disable-line:no-require-imports no-var-requires
+/**
+ * Replaces occurrences of '/' with ':' in a string, since '/' is meaningful inside User-Agent strings as a separator.
+ */
+function replaceSlashes(s) {
+    return s.replace('/', ':');
+}
+const baseUserAgent = `${replaceSlashes(packageJson.name)}/${packageJson.version} ` +
+    `node/${process.version.replace('v', '')} ` +
+    `${os.platform()}/${os.release()}`;
+const appMetadata = {};
+/**
+ * Appends the app metadata into the User-Agent value
+ * @param appMetadata.name name of tool to be counted in instrumentation
+ * @param appMetadata.version version of tool to be counted in instrumentation
+ */
+function addAppMetadata({ name, version }) {
+    appMetadata[replaceSlashes(name)] = version;
+}
+exports.addAppMetadata = addAppMetadata;
+/**
+ * Returns the current User-Agent value for instrumentation
+ */
+function getUserAgent() {
+    const appIdentifier = Object.entries(appMetadata).map(([name, version]) => `${name}/${version}`).join(' ');
+    // only prepend the appIdentifier when its not empty
+    return ((appIdentifier.length > 0) ? `${appIdentifier} ` : '') + baseUserAgent;
+}
+exports.getUserAgent = getUserAgent;
+//# sourceMappingURL=instrument.js.map
+
+/***/ }),
+
+/***/ 6545:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+module.exports = __nccwpck_require__(2618);
+
+/***/ }),
+
+/***/ 8104:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
 var utils = __nccwpck_require__(328);
-var settle = __nccwpck_require__(211);
-var buildFullPath = __nccwpck_require__(934);
+var settle = __nccwpck_require__(3211);
+var buildFullPath = __nccwpck_require__(1934);
 var buildURL = __nccwpck_require__(646);
-var http = __nccwpck_require__(605);
-var https = __nccwpck_require__(34);
-var httpFollow = __nccwpck_require__(707).http;
-var httpsFollow = __nccwpck_require__(707).https;
-var url = __nccwpck_require__(835);
-var zlib = __nccwpck_require__(761);
+var http = __nccwpck_require__(8605);
+var https = __nccwpck_require__(7211);
+var httpFollow = __nccwpck_require__(7707).http;
+var httpsFollow = __nccwpck_require__(7707).https;
+var url = __nccwpck_require__(8835);
+var zlib = __nccwpck_require__(8761);
 var pkg = __nccwpck_require__(696);
-var createError = __nccwpck_require__(226);
-var enhanceError = __nccwpck_require__(516);
+var createError = __nccwpck_require__(5226);
+var enhanceError = __nccwpck_require__(1516);
 
 var isHttps = /https:?/;
 
@@ -795,20 +1006,20 @@ module.exports = function httpAdapter(config) {
 
 /***/ }),
 
-/***/ 454:
+/***/ 3454:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
 var utils = __nccwpck_require__(328);
-var settle = __nccwpck_require__(211);
-var cookies = __nccwpck_require__(169);
+var settle = __nccwpck_require__(3211);
+var cookies = __nccwpck_require__(1545);
 var buildURL = __nccwpck_require__(646);
-var buildFullPath = __nccwpck_require__(934);
-var parseHeaders = __nccwpck_require__(455);
-var isURLSameOrigin = __nccwpck_require__(608);
-var createError = __nccwpck_require__(226);
+var buildFullPath = __nccwpck_require__(1934);
+var parseHeaders = __nccwpck_require__(6455);
+var isURLSameOrigin = __nccwpck_require__(3608);
+var createError = __nccwpck_require__(5226);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -982,17 +1193,17 @@ module.exports = function xhrAdapter(config) {
 
 /***/ }),
 
-/***/ 618:
+/***/ 2618:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
 var utils = __nccwpck_require__(328);
-var bind = __nccwpck_require__(65);
-var Axios = __nccwpck_require__(178);
-var mergeConfig = __nccwpck_require__(831);
-var defaults = __nccwpck_require__(190);
+var bind = __nccwpck_require__(7065);
+var Axios = __nccwpck_require__(8178);
+var mergeConfig = __nccwpck_require__(4831);
+var defaults = __nccwpck_require__(8190);
 
 /**
  * Create an instance of Axios
@@ -1025,15 +1236,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __nccwpck_require__(875);
-axios.CancelToken = __nccwpck_require__(587);
-axios.isCancel = __nccwpck_require__(57);
+axios.Cancel = __nccwpck_require__(8875);
+axios.CancelToken = __nccwpck_require__(1587);
+axios.isCancel = __nccwpck_require__(4057);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __nccwpck_require__(850);
+axios.spread = __nccwpck_require__(4850);
 
 // Expose isAxiosError
 axios.isAxiosError = __nccwpck_require__(650);
@@ -1046,7 +1257,7 @@ module.exports.default = axios;
 
 /***/ }),
 
-/***/ 875:
+/***/ 8875:
 /***/ ((module) => {
 
 "use strict";
@@ -1073,13 +1284,13 @@ module.exports = Cancel;
 
 /***/ }),
 
-/***/ 587:
+/***/ 1587:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var Cancel = __nccwpck_require__(875);
+var Cancel = __nccwpck_require__(8875);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -1138,7 +1349,7 @@ module.exports = CancelToken;
 
 /***/ }),
 
-/***/ 57:
+/***/ 4057:
 /***/ ((module) => {
 
 "use strict";
@@ -1151,7 +1362,7 @@ module.exports = function isCancel(value) {
 
 /***/ }),
 
-/***/ 178:
+/***/ 8178:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -1159,9 +1370,9 @@ module.exports = function isCancel(value) {
 
 var utils = __nccwpck_require__(328);
 var buildURL = __nccwpck_require__(646);
-var InterceptorManager = __nccwpck_require__(214);
-var dispatchRequest = __nccwpck_require__(62);
-var mergeConfig = __nccwpck_require__(831);
+var InterceptorManager = __nccwpck_require__(3214);
+var dispatchRequest = __nccwpck_require__(5062);
+var mergeConfig = __nccwpck_require__(4831);
 
 /**
  * Create a new instance of Axios
@@ -1254,7 +1465,7 @@ module.exports = Axios;
 
 /***/ }),
 
-/***/ 214:
+/***/ 3214:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -1314,14 +1525,14 @@ module.exports = InterceptorManager;
 
 /***/ }),
 
-/***/ 934:
+/***/ 1934:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var isAbsoluteURL = __nccwpck_require__(301);
-var combineURLs = __nccwpck_require__(189);
+var isAbsoluteURL = __nccwpck_require__(1301);
+var combineURLs = __nccwpck_require__(7189);
 
 /**
  * Creates a new URL by combining the baseURL with the requestedURL,
@@ -1342,13 +1553,13 @@ module.exports = function buildFullPath(baseURL, requestedURL) {
 
 /***/ }),
 
-/***/ 226:
+/***/ 5226:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var enhanceError = __nccwpck_require__(516);
+var enhanceError = __nccwpck_require__(1516);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -1368,16 +1579,16 @@ module.exports = function createError(message, config, code, request, response) 
 
 /***/ }),
 
-/***/ 62:
+/***/ 5062:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
 var utils = __nccwpck_require__(328);
-var transformData = __nccwpck_require__(812);
-var isCancel = __nccwpck_require__(57);
-var defaults = __nccwpck_require__(190);
+var transformData = __nccwpck_require__(9812);
+var isCancel = __nccwpck_require__(4057);
+var defaults = __nccwpck_require__(8190);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -1455,7 +1666,7 @@ module.exports = function dispatchRequest(config) {
 
 /***/ }),
 
-/***/ 516:
+/***/ 1516:
 /***/ ((module) => {
 
 "use strict";
@@ -1505,7 +1716,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 /***/ }),
 
-/***/ 831:
+/***/ 4831:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -1600,13 +1811,13 @@ module.exports = function mergeConfig(config1, config2) {
 
 /***/ }),
 
-/***/ 211:
+/***/ 3211:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var createError = __nccwpck_require__(226);
+var createError = __nccwpck_require__(5226);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -1633,7 +1844,7 @@ module.exports = function settle(resolve, reject, response) {
 
 /***/ }),
 
-/***/ 812:
+/***/ 9812:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -1661,14 +1872,14 @@ module.exports = function transformData(data, headers, fns) {
 
 /***/ }),
 
-/***/ 190:
+/***/ 8190:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
 var utils = __nccwpck_require__(328);
-var normalizeHeaderName = __nccwpck_require__(240);
+var normalizeHeaderName = __nccwpck_require__(6240);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -1684,10 +1895,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __nccwpck_require__(454);
+    adapter = __nccwpck_require__(3454);
   } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
     // For node use HTTP adapter
-    adapter = __nccwpck_require__(104);
+    adapter = __nccwpck_require__(8104);
   }
   return adapter;
 }
@@ -1767,7 +1978,7 @@ module.exports = defaults;
 
 /***/ }),
 
-/***/ 65:
+/***/ 7065:
 /***/ ((module) => {
 
 "use strict";
@@ -1864,7 +2075,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 /***/ }),
 
-/***/ 189:
+/***/ 7189:
 /***/ ((module) => {
 
 "use strict";
@@ -1886,7 +2097,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 /***/ }),
 
-/***/ 169:
+/***/ 1545:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -1947,7 +2158,7 @@ module.exports = (
 
 /***/ }),
 
-/***/ 301:
+/***/ 1301:
 /***/ ((module) => {
 
 "use strict";
@@ -1988,7 +2199,7 @@ module.exports = function isAxiosError(payload) {
 
 /***/ }),
 
-/***/ 608:
+/***/ 3608:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -2064,7 +2275,7 @@ module.exports = (
 
 /***/ }),
 
-/***/ 240:
+/***/ 6240:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -2084,7 +2295,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 /***/ }),
 
-/***/ 455:
+/***/ 6455:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -2145,7 +2356,7 @@ module.exports = function parseHeaders(headers) {
 
 /***/ }),
 
-/***/ 850:
+/***/ 4850:
 /***/ ((module) => {
 
 "use strict";
@@ -2186,7 +2397,7 @@ module.exports = function spread(callback) {
 "use strict";
 
 
-var bind = __nccwpck_require__(65);
+var bind = __nccwpck_require__(7065);
 
 /*global toString:true*/
 
@@ -2539,7 +2750,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 133:
+/***/ 1133:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 var debug;
@@ -2548,7 +2759,7 @@ module.exports = function () {
   if (!debug) {
     try {
       /* eslint global-require: off */
-      debug = __nccwpck_require__(975)("follow-redirects");
+      debug = __nccwpck_require__(9975)("follow-redirects");
     }
     catch (error) {
       debug = function () { /* */ };
@@ -2560,16 +2771,16 @@ module.exports = function () {
 
 /***/ }),
 
-/***/ 707:
+/***/ 7707:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-var url = __nccwpck_require__(835);
+var url = __nccwpck_require__(8835);
 var URL = url.URL;
-var http = __nccwpck_require__(605);
-var https = __nccwpck_require__(34);
-var Writable = __nccwpck_require__(413).Writable;
-var assert = __nccwpck_require__(357);
-var debug = __nccwpck_require__(133);
+var http = __nccwpck_require__(8605);
+var https = __nccwpck_require__(7211);
+var Writable = __nccwpck_require__(2413).Writable;
+var assert = __nccwpck_require__(2357);
+var debug = __nccwpck_require__(1133);
 
 // Create handlers that pass events from native requests
 var events = ["abort", "aborted", "connect", "error", "socket", "timeout"];
@@ -3098,7 +3309,7 @@ module.exports.wrap = wrap;
 
 /***/ }),
 
-/***/ 975:
+/***/ 9975:
 /***/ ((module) => {
 
 module.exports = eval("require")("debug");
@@ -3114,7 +3325,7 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.1","description":"P
 
 /***/ }),
 
-/***/ 357:
+/***/ 2357:
 /***/ ((module) => {
 
 "use strict";
@@ -3122,7 +3333,7 @@ module.exports = require("assert");;
 
 /***/ }),
 
-/***/ 747:
+/***/ 5747:
 /***/ ((module) => {
 
 "use strict";
@@ -3130,7 +3341,7 @@ module.exports = require("fs");;
 
 /***/ }),
 
-/***/ 605:
+/***/ 8605:
 /***/ ((module) => {
 
 "use strict";
@@ -3138,7 +3349,7 @@ module.exports = require("http");;
 
 /***/ }),
 
-/***/ 34:
+/***/ 7211:
 /***/ ((module) => {
 
 "use strict";
@@ -3146,7 +3357,7 @@ module.exports = require("https");;
 
 /***/ }),
 
-/***/ 87:
+/***/ 2087:
 /***/ ((module) => {
 
 "use strict";
@@ -3154,7 +3365,7 @@ module.exports = require("os");;
 
 /***/ }),
 
-/***/ 622:
+/***/ 5622:
 /***/ ((module) => {
 
 "use strict";
@@ -3162,7 +3373,7 @@ module.exports = require("path");;
 
 /***/ }),
 
-/***/ 413:
+/***/ 2413:
 /***/ ((module) => {
 
 "use strict";
@@ -3170,7 +3381,7 @@ module.exports = require("stream");;
 
 /***/ }),
 
-/***/ 835:
+/***/ 8835:
 /***/ ((module) => {
 
 "use strict";
@@ -3178,7 +3389,7 @@ module.exports = require("url");;
 
 /***/ }),
 
-/***/ 761:
+/***/ 8761:
 /***/ ((module) => {
 
 "use strict";
@@ -3249,33 +3460,38 @@ var __webpack_exports__ = {};
  * SOFTWARE.
  */
 
-const core = __nccwpck_require__(186)
-const axios = __nccwpck_require__(545)
+const core = __nccwpck_require__(2186)
+const { IncomingWebhook } = __nccwpck_require__(1095)
 
-// Look for a string that matches base URL of a Slack webhook but is ending.
+// Look for a string that matches base URL of a Slack webhook but not ending.
 // This will eliminate most cases of fundamentally invalid webhook URLs.
 const validWebhookUrlPattern = /^https:\/\/hooks\.slack\.com\/(?!$)/
 
 try {
+    // 1. Grab the webhook and validate
     const webhookUrl = process.env.SLACK_WEBHOOK_URL
     if (!webhookUrl) throw new Error('The `SLACK_WEBHOOK_URL` environment variable is required')
-
     if (!validWebhookUrlPattern.test(webhookUrl)) throw new Error('Webhook must be a Slack webhook URL')
 
+    // 2. Pick up the payload and validate
     const payload = core.getInput('payload')
     if (payload.length < 1) throw new Error('The payload input must be supplied')
 
+    // 3. Parse the payload into an object
     let data
 
     try {
         data = JSON.parse(payload)
     } catch (_) {
-        throw new Error('The playoad input must be valid JSON');
+        throw new Error('The payload input must be valid JSON')
     }
 
-    axios.post(webhookUrl, data)
+    // 4. Send our data to the webhook
+    const webhook = new IncomingWebhook(webhookUrl)
+    webhook
+        .send(data)
         .then(() => {})
-        .catch(err => {
+        .catch((err) => {
             throw new Error(`Webhook request failed\n${data}\n${err}`)
         })
 } catch (err) {

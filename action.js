@@ -51,7 +51,7 @@ try {
     // 4. Send our data to the webhook
     const webhook = new IncomingWebhook(webhookUrl)
     webhook
-        .post(webhookUrl, data)
+        .send(data)
         .then(() => {})
         .catch((err) => {
             throw new Error(`Webhook request failed\n${data}\n${err}`)
