@@ -1,6 +1,6 @@
 {
     "name": "action-slack-webhook",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "description": "This action will perform a POST request to a given Slack webhook. This can be used to push both simple messages as well as more complex Block Kit based rich messages.",
     "main": "dist/action.js",
     "scripts": {
